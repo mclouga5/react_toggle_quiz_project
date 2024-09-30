@@ -64,16 +64,6 @@ const ToggleAnswer: React.FC<ToggleAnswerProps> = ({
     onMeanValueChange(options[optionIndex].value); // Notify parent with selected value
   };
 
-  const selectOption =  (index: number) => {
-    if (!disable) {
-      handleOptionClick(index);
-    }
-    else
-    console.debug(
-      'Forbidden Action on Element', String(toggleRef.current?.outerText),
-       ' at Index', String(index));
-  };
-
   {/* Handle window resize and update translate value for
       when you guys are messing around in dev tools! */}
    const handleResize = () => {
@@ -101,7 +91,7 @@ const ToggleAnswer: React.FC<ToggleAnswerProps> = ({
         <div
           key={index}
           className="option-text"
-          onClick={() => selectOption(index)}
+          onClick={() => !disable && handleOptionClick(index)}
           style={{
             color: localOptionIndex === index ? '#645d57' : 'white',
             cursor: disable ? 'not-allowed' : 'pointer',
