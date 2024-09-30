@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 interface MeanValueCalculatorProps {
     optionValues: number[];  // Array of values based on the selected toggle button position for each toggle option
@@ -16,7 +16,7 @@ const MeanValueCalculator: React.FC<MeanValueCalculatorProps> =
             ? total / optionValues.length
             : 0;  // Default to value if no values (never NaN)
             onMeanValueChange(meanValue);  // Notify parent of the mean correctness
-    }, [optionValues, onMeanValueChange]);
+    }, [optionValues]);
 
     return null; // No UI for this component; just correctness logic
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import QuestionAnswer from './QuestionAnswer'
 import Navigation from './Navigation';
 import { gradients, questionsList } from './data';
@@ -10,6 +10,9 @@ const App: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [meanValue, setMeanValue] = useState<number>(0);
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
+  const [selectedOptions, setSelectedOptions] = useState<number[][]>(
+    questionsList.map(() => []) // Initialize empty arrays for each question
+  );
 
   {/* Question Logic */}
   const isLastQuestion = currentQuestionIndex === questionsList.length - 1;
@@ -29,9 +32,17 @@ const App: React.FC = () => {
   };
 
   {/* Answer Logic */}
-  const handleAnswerSelect = (value: number) => {
-    setMeanValue(value);
+  const handleAnswerSelect = (values: number[]) => {
+    setSelectedOptions(prevSelectedOptions => {
+      const updatedSelectedOptions = [...prevSelectedOptions];
+      updatedSelectedOptions[currentQuestionIndex] = values; // Update selected options for the current question
+      return updatedSelectedOptions;
+    });
   };
+
+  const handleMeanValueChange = useCallback((mean: number) => {
+    setMeanValue(mean);
+  }, []);
 
   const allAnswersCorrect = (meanValue === 1);
 
@@ -67,8 +78,10 @@ const App: React.FC = () => {
       <div key={'Question' + String(currentQuestionIndex)}>
         <QuestionAnswer
           questionAnswer={currentQuestionAnswer}
+          onMeanValueChange={handleMeanValueChange}
           onAnswerSelect={handleAnswerSelect}
           disableAnswering={allAnswersCorrect}
+          userSelectedValues={selectedOptions[currentQuestionIndex]}
         />
 
         {/* Navigate through QuestionAnswerSet's */}

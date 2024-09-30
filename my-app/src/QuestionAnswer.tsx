@@ -15,31 +15,42 @@ interface QuestionAnswerSet {
 
 interface QuestionAnswerProps {
   questionAnswer: QuestionAnswerSet;
-  onAnswerSelect: (value: number) => void; // Callback to handle answer selection
+  onMeanValueChange?: (meanValue: number) => void;
+  onAnswerSelect: (value: number[]) => void; // Callback to handle answer selection
   disableAnswering: boolean;
+  userSelectedValues: number[];
 }
 
 const QuestionAnswer: React.FC<QuestionAnswerProps> = ({
     questionAnswer,
+    onMeanValueChange = () => {},
     onAnswerSelect,
-    disableAnswering,}) => {
+    disableAnswering,
+    userSelectedValues}) => {
   const {question, answerList} = questionAnswer;
   const [selectedValues, setSelectedValues] = useState<number[]>([]);
 
   const handleOptionSelect = (index: number, value: number) => {
     const updatedValues = [...selectedValues];
-    updatedValues[index] = value; // Update the selected value for this toggle
-    setSelectedValues(updatedValues); // Update state with new selected values
+    updatedValues[index] = value;
+    setSelectedValues(updatedValues);
   };
 
   useEffect(() => {
-    if (selectedValues.length === 0) {
-      const initialValues = answerList.map(
-        (options) => options[0].value
-      );
-      setSelectedValues(initialValues);
+    if (userSelectedValues.length > 0 && selectedValues.length === 0) {
+      setSelectedValues(userSelectedValues);
+    } else if (selectedValues.length === 0) {
+      const defaultValues = answerList.map((options) => options[0].value);
+      setSelectedValues(defaultValues);
     }
-  }, [answerList, question]);
+  }, [userSelectedValues, answerList, question]);
+
+  useEffect(() => {
+    if (JSON.stringify(selectedValues) !== JSON.stringify(userSelectedValues)) {
+      onAnswerSelect(selectedValues);
+    }
+  }, [selectedValues, onAnswerSelect, userSelectedValues]);
+
 
   return (
     <div>
@@ -53,11 +64,12 @@ const QuestionAnswer: React.FC<QuestionAnswerProps> = ({
           options={options} // Pass the current set of options to ToggleAnswer
           onMeanValueChange={(value) => handleOptionSelect(index, value)} // Handle option selection
           disable={disableAnswering}
+          selectedValue={selectedValues[index]}
         />
       ))}
 
       {/* MeanValueCalculator for calculating the mean of selected values */}
-      <MeanValueCalculator optionValues={selectedValues} onMeanValueChange={onAnswerSelect} />
+      <MeanValueCalculator optionValues={selectedValues} onMeanValueChange={onMeanValueChange} />
 
     </div>
   );
