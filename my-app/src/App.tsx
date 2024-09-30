@@ -22,6 +22,12 @@ const App: React.FC = () => {
     setCurrentQuestionIndex(prevIndex => Math.min(prevIndex + 1, questionsList.length - 1));
   };
 
+  const handlePreviousQuestion = () => {
+    if (currentQuestionIndex != 0) {
+    setCurrentQuestionIndex(prevIndex => Math.max(prevIndex - 1, 0));
+    }
+  };
+
   {/* Answer Logic */}
   const handleAnswerSelect = (value: number) => {
     setMeanValue(value);
@@ -42,6 +48,8 @@ const App: React.FC = () => {
 
   {/* Navigation Logic */}
   const nextButtonText = isLastQuestion ? "End Quiz" : "Next Question";
+  const showAdvanceButton = !(questionsList.length === 0);
+  const showPreviousButton = !(currentQuestionIndex === 0);
   const currentQuestionAnswer = questionsList[currentQuestionIndex];
 
   return (
@@ -65,8 +73,12 @@ const App: React.FC = () => {
 
         {/* Navigate through QuestionAnswerSet's */}
         <Navigation
+          showAdvanceButton={showAdvanceButton}
+          showPreviousButton={showPreviousButton}
           advanceButtonText={nextButtonText}
+          previousButtonText="Previous Question"
           onAdvance={handleNextQuestion}
+          onPrevious={handlePreviousQuestion}
           disableAdvance={!(meanValue === 1) || isLastQuestion && !allAnswersCorrect}
         />
       </div>
