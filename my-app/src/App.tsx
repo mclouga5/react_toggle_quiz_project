@@ -3,6 +3,7 @@ import QuestionAnswer from './QuestionAnswer'
 import Navigation from './Navigation';
 import { gradients, questionsList } from './data';
 import Confetti from './Confetti';
+import DynamicStyleUpdater from './DynamicStyleUpdater';
 import './App.css';
 
 const App: React.FC = () => {
@@ -28,15 +29,16 @@ const App: React.FC = () => {
 
   const allAnswersCorrect = (meanValue === 1);
 
-  useEffect(() => {
+  const getBackgroundStyle = () => {
     if (meanValue < 0.5) {
-      document.body.style.background = gradients[0].gradient;
+      return { background: gradients[0].gradient};
     } else if (meanValue >= 0.5 && meanValue < 1) {
-      document.body.style.background = gradients[1].gradient;
+      return { background: gradients[1].gradient};
     } else if (meanValue === 1) {
-      document.body.style.background = gradients[2].gradient;
+      return { background: gradients[2].gradient};
     }
-  }, [meanValue]);
+    return { background: 'white', color: 'black' };
+  };
 
   {/* Navigation Logic */}
   const nextButtonText = isLastQuestion ? "End Quiz" : "Next Question";
@@ -46,6 +48,12 @@ const App: React.FC = () => {
     <div id="Container">
       {/* Conditionally render the Confetti component */}
       <Confetti trigger={showConfetti} />
+
+      {/* Background changer component with flexible condition */}
+      <DynamicStyleUpdater
+        getStyle={getBackgroundStyle}
+        triggerCondition={meanValue}
+        elementSelector='body' />
 
       {/* Display Questions and Answers */}
       <div key={'Question' + String(currentQuestionIndex)}>
