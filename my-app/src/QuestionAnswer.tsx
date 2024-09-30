@@ -18,7 +18,7 @@ interface QuestionAnswerProps {
   onMeanValueChange?: (meanValue: number) => void;
   onAnswerSelect: (value: number[]) => void; // Callback to handle answer selection
   disableAnswering: boolean;
-  userSelectedValues: number[];
+  userSelectedIndices: number[];
 }
 
 const QuestionAnswer: React.FC<QuestionAnswerProps> = ({
@@ -26,30 +26,35 @@ const QuestionAnswer: React.FC<QuestionAnswerProps> = ({
     onMeanValueChange = () => {},
     onAnswerSelect,
     disableAnswering,
-    userSelectedValues}) => {
+    userSelectedIndices}) => {
   const {question, answerList} = questionAnswer;
-  const [selectedValues, setSelectedValues] = useState<number[]>([]);
+  const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
 
   const handleOptionSelect = (index: number, value: number) => {
-    const updatedValues = [...selectedValues];
+    const updatedValues = [...selectedIndices];
     updatedValues[index] = value;
-    setSelectedValues(updatedValues);
+    setSelectedIndices(updatedValues);
   };
 
   useEffect(() => {
-    if (userSelectedValues.length > 0 && selectedValues.length === 0) {
-      setSelectedValues(userSelectedValues);
-    } else if (selectedValues.length === 0) {
-      const defaultValues = answerList.map((options) => options[0].value);
-      setSelectedValues(defaultValues);
+    if (userSelectedIndices.length > 0 && selectedIndices.length === 0) {
+      setSelectedIndices(userSelectedIndices);
+    } else if (selectedIndices.length === 0) {
+      const defaultValues = (Array(answerList.length).fill(0))
+      setSelectedIndices(defaultValues);
     }
-  }, [userSelectedValues, answerList, question]);
+  }, [userSelectedIndices, answerList, question]);
+
+  const selectedValues = userSelectedIndices.map((selectedIndex, listIndex) => {
+    const currentAnswerList = answerList[listIndex];
+    return currentAnswerList[selectedIndex]?.value || 0;
+  });
 
   useEffect(() => {
-    if (JSON.stringify(selectedValues) !== JSON.stringify(userSelectedValues)) {
-      onAnswerSelect(selectedValues);
+    if (JSON.stringify(selectedIndices) !== JSON.stringify(userSelectedIndices)) {
+      onAnswerSelect(selectedIndices);
     }
-  }, [selectedValues, onAnswerSelect, userSelectedValues]);
+  }, [selectedIndices, onAnswerSelect, userSelectedIndices]);
 
 
   return (
@@ -64,7 +69,7 @@ const QuestionAnswer: React.FC<QuestionAnswerProps> = ({
           options={options} // Pass the current set of options to ToggleAnswer
           onMeanValueChange={(value) => handleOptionSelect(index, value)} // Handle option selection
           disable={disableAnswering}
-          selectedValue={selectedValues[index]}
+          selectedIndex={selectedIndices[index]}
         />
       ))}
 

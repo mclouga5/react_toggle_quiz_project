@@ -32,10 +32,10 @@ const App: React.FC = () => {
   };
 
   {/* Answer Logic */}
-  const handleAnswerSelect = (values: number[]) => {
+  const handleAnswerSelect = (indices: number[]) => {
     setSelectedOptions(prevSelectedOptions => {
       const updatedSelectedOptions = [...prevSelectedOptions];
-      updatedSelectedOptions[currentQuestionIndex] = values; // Update selected options for the current question
+      updatedSelectedOptions[currentQuestionIndex] = indices; // Update selected options for the current question
       return updatedSelectedOptions;
     });
   };
@@ -81,7 +81,7 @@ const App: React.FC = () => {
           onMeanValueChange={handleMeanValueChange}
           onAnswerSelect={handleAnswerSelect}
           disableAnswering={allAnswersCorrect}
-          userSelectedValues={selectedOptions[currentQuestionIndex]}
+          userSelectedIndices={selectedOptions[currentQuestionIndex]}
         />
 
         {/* Navigate through QuestionAnswerSet's */}

@@ -10,14 +10,14 @@ interface ToggleAnswerProps {
   options: Option[];
   onMeanValueChange: (value: number) => void;
   disable: boolean;
-  selectedValue: number; // Pass the selected value directly
+  selectedIndex: number; // Pass the selected value directly
 }
 
 const ToggleAnswer: React.FC<ToggleAnswerProps> = ({
   options,
   onMeanValueChange,
   disable,
-  selectedValue,
+  selectedIndex,
 }) => {
   const toggleRef = useRef<HTMLDivElement | null>(null);
   const [selectedOptionSize, setSelectedOptionSize] = useState<{ width: string; height: string }>({ width: '0', height: '0' });
@@ -76,16 +76,13 @@ const ToggleAnswer: React.FC<ToggleAnswerProps> = ({
     };
   }, [options.length]);
 
-
-  const selectedIndex = options.findIndex(option => option.value === selectedValue);
-
   return (
     <div className="toggle-container" ref={toggleRef}>
       {options.map((option, index) => (
         <div
           key={index}
           className="option-text"
-          onClick={() => handleOptionClick(option.value)}
+          onClick={() => handleOptionClick(index)}
           style={{
             color: selectedIndex === index ? '#645d57' : 'white',
             cursor: disable ? 'not-allowed' : 'pointer',
