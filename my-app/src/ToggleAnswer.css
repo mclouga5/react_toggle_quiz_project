@@ -38,7 +38,7 @@
     z-index: 2;
   }
 
-  .toggle-button {
+  .selected-option {
     border-radius: 20px;
     position: absolute;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);

@@ -20,10 +20,10 @@ const ToggleAnswer: React.FC<ToggleAnswerProps> = ({
 
   const toggleRef = useRef<HTMLDivElement | null>(null);
   const [localOptionIndex, setLocalOptiontIndex] = useState<number>(0);
-  const [buttonSize, setButtonSize] = useState<{ width: string; height: string }>({ width: '0', height: '0' });
+  const [selectedOptionSize, setSelectedOptionSize] = useState<{ width: string; height: string }>({ width: '0', height: '0' });
   const [translateValue, setTranslateValue] = useState<string>('0px'); // explaination line59
 
-  {/* toggle button styling */}
+  {/* selected option styling */}
   const calculateTranslateValue = (): string => {
     const toggleElement = toggleRef.current;
 
@@ -31,44 +31,42 @@ const ToggleAnswer: React.FC<ToggleAnswerProps> = ({
 
     if (toggleElement && screenWidth < 764){
       const containerHeight = toggleElement.clientHeight;
-      const buttonHeight = containerHeight / options.length;
-      return `translateY(${localOptionIndex * buttonHeight}px)`;
+      const selectedOptionHeight = containerHeight / options.length;
+      return `translateY(${localOptionIndex * selectedOptionHeight}px)`;
     }
     else if (toggleElement && screenWidth > 764){
       const containerWidth = toggleElement.clientWidth;
-      const buttonWidth = containerWidth / options.length;
-      return `translateX(${localOptionIndex * buttonWidth}px)`;
+      const selectedOptionWidth = containerWidth / options.length;
+      return `translateX(${localOptionIndex * selectedOptionWidth}px)`;
     }
     return '0px'
   };
 
-  const calculateButtonSize = () => {
+  const calculateSelectedOptionSize = () => {
     const toggleElement = toggleRef.current;
 
     if (toggleElement) {
       const screenWidth = window.innerWidth;
       const containerSize = screenWidth < 764 ? toggleElement.clientHeight : toggleElement.clientWidth;
-      const buttonSizeValue = containerSize / options.length;
+      const selectedOptionSizeValue = containerSize / options.length;
 
-      // Set the width and height of the button based on the current screen size
-      setButtonSize({
-        width: screenWidth < 764 ? '90vw' : `${buttonSizeValue}px`,
+      // Set the width and height of the selected option based on the current screen size
+      setSelectedOptionSize({
+        width: screenWidth < 764 ? '90vw' : `${selectedOptionSizeValue}px`,
         height: screenWidth < 764 ? `${100 / options.length}%` : `${toggleElement.clientHeight}px`,
       });
     }
   };
 
-  console.log(buttonSize)
-
-  {/* toggle button functionality */}
-  const handleButtonClick = (optionIndex: number) => {
+  {/* toggle selected option functionality */}
+  const handleOptionClick = (optionIndex: number) => {
     setLocalOptiontIndex(optionIndex);
     onMeanValueChange(options[optionIndex].value); // Notify parent with selected value
   };
 
   const selectOption =  (index: number) => {
     if (!disable) {
-      handleButtonClick(index);
+      handleOptionClick(index);
     }
     else
     console.debug(
@@ -80,13 +78,13 @@ const ToggleAnswer: React.FC<ToggleAnswerProps> = ({
       when you guys are messing around in dev tools! */}
    const handleResize = () => {
     setTranslateValue(calculateTranslateValue());
-    calculateButtonSize();
+    calculateSelectedOptionSize();
   };
 
   useEffect(() => {
     // Update translate and size values initially
     setTranslateValue(calculateTranslateValue());
-    calculateButtonSize();
+    calculateSelectedOptionSize();
 
     // Add resize event listener
     window.addEventListener('resize', handleResize);
@@ -113,11 +111,11 @@ const ToggleAnswer: React.FC<ToggleAnswerProps> = ({
         </div>
       ))}
 
-      <div className="toggle-button"
+      <div className="selected-option"
         style={{
           transform: String(translateValue),
-          width: buttonSize.width,
-          height: buttonSize.height,
+          width: selectedOptionSize.width,
+          height: selectedOptionSize.height,
         }}
       />
     </div>
