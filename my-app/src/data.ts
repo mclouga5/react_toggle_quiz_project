@@ -23,7 +23,6 @@ export const questionsList: QuestionAnswerSet[] = [
         question: 'Aoife will make an amazing next hire for Seneca Learning because she...',
         answerList: [[
             { label: "is a great GAA player", value: 0.5 },
-            { label: "is able to play tinwhistle", value: 0 },
             { label: "works well in a team", value: 1 },
         ],
         [

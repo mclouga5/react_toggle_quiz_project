@@ -20,14 +20,10 @@ const ToggleAnswer: React.FC<ToggleAnswerProps> = ({
 
   const toggleRef = useRef<HTMLDivElement | null>(null);
   const [localOptionIndex, setLocalOptiontIndex] = useState<number>(0);
-  const [width, setWidth] = useState(window.innerWidth);
+  const [buttonSize, setButtonSize] = useState<{ width: string; height: string }>({ width: '0', height: '0' });
   const [translateValue, setTranslateValue] = useState<string>('0px'); // explaination line59
 
-  const handleButtonClick = (optionIndex: number) => {
-    setLocalOptiontIndex(optionIndex);
-    onMeanValueChange(options[optionIndex].value); // Notify parent with selected value
-  };
-
+  {/* toggle button styling */}
   const calculateTranslateValue = (): string => {
     const toggleElement = toggleRef.current;
 
@@ -46,6 +42,30 @@ const ToggleAnswer: React.FC<ToggleAnswerProps> = ({
     return '0px'
   };
 
+  const calculateButtonSize = () => {
+    const toggleElement = toggleRef.current;
+
+    if (toggleElement) {
+      const screenWidth = window.innerWidth;
+      const containerSize = screenWidth < 764 ? toggleElement.clientHeight : toggleElement.clientWidth;
+      const buttonSizeValue = containerSize / options.length;
+
+      // Set the width and height of the button based on the current screen size
+      setButtonSize({
+        width: screenWidth < 764 ? '90vw' : `${buttonSizeValue}px`,
+        height: screenWidth < 764 ? `${100 / options.length}%` : `${toggleElement.clientHeight}px`,
+      });
+    }
+  };
+
+  console.log(buttonSize)
+
+  {/* toggle button functionality */}
+  const handleButtonClick = (optionIndex: number) => {
+    setLocalOptiontIndex(optionIndex);
+    onMeanValueChange(options[optionIndex].value); // Notify parent with selected value
+  };
+
   const selectOption =  (index: number) => {
     if (!disable) {
       handleButtonClick(index);
@@ -60,11 +80,13 @@ const ToggleAnswer: React.FC<ToggleAnswerProps> = ({
       when you guys are messing around in dev tools! */}
    const handleResize = () => {
     setTranslateValue(calculateTranslateValue());
+    calculateButtonSize();
   };
 
   useEffect(() => {
-    // Update translate value initially
+    // Update translate and size values initially
     setTranslateValue(calculateTranslateValue());
+    calculateButtonSize();
 
     // Add resize event listener
     window.addEventListener('resize', handleResize);
@@ -94,6 +116,8 @@ const ToggleAnswer: React.FC<ToggleAnswerProps> = ({
       <div className="toggle-button"
         style={{
           transform: String(translateValue),
+          width: buttonSize.width,
+          height: buttonSize.height,
         }}
       />
     </div>
